@@ -44,9 +44,18 @@ export class ConversaoPage {
   constructor(private http: HttpClient) {}
 
   convert() {
-    const url = `https://api.exchangerate.host/convert?from=${this.fromCurrency}&to=${this.toCurrency}&amount=${this.amount}`;
-    this.http.get<any>(url).subscribe(data => {
-      this.result = data.result;
-    });
-  }
+  const url = 'https://v6.exchangerate-api.com/v6/51194c22216c81581980f90e/latest/' + this.fromCurrency;
+
+  this.http.get<any>(url).subscribe(data => {
+    const rate = data.conversion_rates[this.toCurrency];
+    if (rate) {
+      this.result = this.amount * rate;
+    } else {
+      alert('Moeda de destino não encontrada.');
+    }
+  }, error => {
+    console.error('Erro na API:', error);
+    alert('Erro ao buscar taxa de câmbio.');
+  });
+}
 }

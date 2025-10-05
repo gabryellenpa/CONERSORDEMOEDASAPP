@@ -12,6 +12,8 @@ import { IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonListHeader, IonN
 export class AppComponent {
   public appPages = [
   { title: 'Moedas', url: '/moedas', icon: 'cash' },
-  { title: 'Conversão', url: '/conversao', icon: 'swap-horizontal' }
+  { title: 'Conversão', url: '/conversao', icon: 'swap-horizontal' },
+  { title: 'Viagem', url: '/viagem', icon: 'airplane' }
 ];
+
 }
