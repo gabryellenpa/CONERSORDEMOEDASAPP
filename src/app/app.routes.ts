@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { provideRouter } from '@angular/router';
 
+
 export const routes: Routes = [
   {
     path: '',
@@ -14,5 +15,15 @@ export const routes: Routes = [
   {
     path: 'conversao',
     loadComponent: () => import('./pages/conversao/conversao.page').then(m => m.ConversaoPage)
-  }
+  },
+  {
+    path: 'viagem',
+    loadComponent: () => import('./pages/viagem/viagem.page').then( m => m.ViagemPage)
+  },
+  {
+    path: 'favoritos',
+    loadComponent: () => import('./pages/favoritos/favoritos.page').then( m => m.FavoritosPage)
+  },
+ 
+
 ];

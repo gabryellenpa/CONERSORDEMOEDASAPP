@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Favoritos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="adicionarFavorito()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="favoritos.length > 0; else vazio">
+    <ion-list>
+      <ion-item *ngFor="let favorito of favoritos">
+  <ion-label>
+    <h2>{{ favorito.nome }}</h2>
+    <p>{{ favorito.de }} → {{ favorito.para }}</p>
+    <p>Valor: {{ favorito.valor }} | Resultado: {{ favorito.resultado }}</p>
+      
+        </ion-label>
+
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="editarFavorito(favorito)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" fill="clear" (click)="removerFavorito(favorito)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>       
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+
+  <ng-template #vazio>
+    <div class="vazio" style="text-align:center; margin-top:50px;">
+      <ion-icon name="star-outline" size="large"></ion-icon>
+      <p>Nenhum favorito adicionado ainda.</p>
+    </div>
+  </ng-template>
+</ion-content>
