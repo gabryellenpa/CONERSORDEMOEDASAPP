@@ -1,32 +1,28 @@
 import { Injectable } from '@angular/core';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase.config';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritosService {
+  private apiUrl = 'http://localhost:3000/favoritos'; // backend local
 
-  private colecao = collection(db, 'favoritos');
+  constructor(private http: HttpClient) {}
 
-  constructor() {}
-
-  async getFavoritos(): Promise<any[]> {
-    const snapshot = await getDocs(this.colecao);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  listarFavoritos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  async adicionarFavorito(item: any) {
-    await addDoc(this.colecao, item);
+  adicionarFavorito(favorito: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, favorito);
   }
 
-  async removerFavorito(id: string) {
-    const ref = doc(db, 'favoritos', id);
-    await deleteDoc(ref);
+  editarFavorito(id: string, favorito: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, favorito);
   }
 
-  async editarFavorito(id: string, novosDados: any) {
-    const ref = doc(db, 'favoritos', id);
-    await updateDoc(ref, novosDados);
+  deletarFavorito(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

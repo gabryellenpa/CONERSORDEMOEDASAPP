@@ -1,41 +1,63 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="">
     <ion-title>Favoritos</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="adicionarFavorito()">
-        <ion-icon name="add-circle-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ng-container *ngIf="favoritos.length > 0; else vazio">
-    <ion-list>
-      <ion-item *ngFor="let favorito of favoritos">
-  <ion-label>
-    <h2>{{ favorito.nome }}</h2>
-    <p>{{ favorito.de }} → {{ favorito.para }}</p>
-    <p>Valor: {{ favorito.valor }} | Resultado: {{ favorito.resultado }}</p>
-      
-        </ion-label>
 
-        <ion-buttons slot="end">
-          <ion-button fill="clear" (click)="editarFavorito(favorito)">
-            <ion-icon name="create-outline"></ion-icon>
-          </ion-button>
-          <ion-button color="danger" fill="clear" (click)="removerFavorito(favorito)">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>       
-        </ion-buttons>
-      </ion-item>
-    </ion-list>
-  </ng-container>
+  
+  <ion-list *ngIf="!mostrandoFormulario">
+    <ion-item *ngFor="let fav of favoritos">
+      <ion-label>
+        <h2>{{ fav.moedaOrigem }} → {{ fav.moedaDestino }}</h2>
+        <p>Valor: {{ fav.valor }} | Resultado: {{ fav.resultado }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="warning" (click)="abrirFormulario(fav)">Editar</ion-button>
+      <ion-button fill="clear" color="danger" (click)="excluirFavorito(fav._id)">Excluir</ion-button>
+    </ion-item>
 
-  <ng-template #vazio>
-    <div class="vazio" style="text-align:center; margin-top:50px;">
-      <ion-icon name="star-outline" size="large"></ion-icon>
-      <p>Nenhum favorito adicionado ainda.</p>
-    </div>
-  </ng-template>
+    <p *ngIf="favoritos.length === 0" class="ion-text-center ion-margin-top">
+      Nenhum favorito ainda 💤
+    </p>
+  </ion-list>
+
+  <!-- FORMULÁRIO (para adicionar ou editar) -->
+  <div *ngIf="mostrandoFormulario" class="formulario-container">
+    <ion-item>
+      <ion-label position="stacked">Moeda origem</ion-label>
+      <ion-input [(ngModel)]="novoFavorito.moedaOrigem"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Moeda destino</ion-label>
+      <ion-input [(ngModel)]="novoFavorito.moedaDestino"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Valor</ion-label>
+      <ion-input type="number" [(ngModel)]="novoFavorito.valor"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Resultado</ion-label>
+      <ion-input type="number" [(ngModel)]="novoFavorito.resultado"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" color="success" (click)="salvarFavorito()">
+      {{ favoritoEditando ? 'Salvar alterações' : 'Adicionar favorito' }}
+    </ion-button>
+
+    <ion-button expand="block" color="medium" fill="outline" (click)="cancelarFormulario()">
+      Cancelar
+    </ion-button>
+  </div>
+
+  <!-- BOTÃO FLUTUANTE -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="!mostrandoFormulario">
+    <ion-fab-button color="primary" (click)="abrirFormulario()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

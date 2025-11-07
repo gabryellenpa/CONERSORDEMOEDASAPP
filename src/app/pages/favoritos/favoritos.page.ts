@@ -1,96 +1,115 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FavoritosService } from '../../services/favoritos.service';
+import { ToastController, AlertController } from '@ionic/angular';
 import {
-  IonContent,
   IonHeader,
-  IonTitle,
   IonToolbar,
+  IonTitle,
+  IonContent,
   IonItem,
   IonLabel,
-  IonList,
   IonButton,
-  IonIcon, IonButtons } from '@ionic/angular/standalone';
-import { AlertController } from '@ionic/angular';
-import { FormsModule } from '@angular/forms'; 
-import { addIcons } from 'ionicons';
-import { trashOutline, createOutline, addCircleOutline } from 'ionicons/icons';
-import { collection, getDocs } from 'firebase/firestore';
-import { FavoritosService } from '../../services/favoritos.service';
-import { db } from '../../firebase.config';
+  IonList,
+  IonInput,
+  IonFab,
+  IonFabButton,
+  IonIcon
+} from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { add, close } from 'ionicons/icons';
 
 @Component({
   selector: 'app-favoritos',
   templateUrl: './favoritos.page.html',
-  styleUrls: ['./favoritos.page.scss'],
   standalone: true,
-  imports: [IonButtons, 
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonItem,
-    IonLabel,
-    IonList,
-    IonButton,
-    IonIcon
+  imports: [
+    IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
+    IonLabel, IonButton, IonList, IonInput, IonFab, IonFabButton,
+    IonIcon, CommonModule, FormsModule
   ]
 })
-
-export class FavoritosPage {
+export class FavoritosPage implements OnInit {
   favoritos: any[] = [];
+  favoritoEditando: any = null;
+  mostrandoFormulario = false;
+  novoFavorito = { moedaOrigem: '', moedaDestino: '', valor: 0, resultado: 0 };
 
   constructor(
-    private alertController: AlertController,
-    private favoritosService: FavoritosService
-  ) {
-    addIcons({ trashOutline, createOutline, addCircleOutline });
+    private favoritosService: FavoritosService,
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) {}
+
+  ngOnInit() {
     this.carregarFavoritos();
   }
 
-   async testarFirebase() {
-    try {
-      const snapshot = await getDocs(collection(db, 'teste'));
-      console.log('🔥 Firebase conectado! Total de documentos:', snapshot.size);
-    } catch (error) {
-      console.error('❌ Erro ao conectar ao Firebase:', error);
+  carregarFavoritos() {
+    this.favoritosService.listarFavoritos().subscribe({
+      next: (dados) => (this.favoritos = dados),
+      error: () => this.mostrarToast('Erro ao carregar favoritos', 'danger')
+    });
+  }
+
+  abrirFormulario(favorito: any = null) {
+    this.mostrandoFormulario = true;
+    this.favoritoEditando = favorito;
+    this.novoFavorito = favorito
+      ? { ...favorito }
+      : { moedaOrigem: '', moedaDestino: '', valor: 0, resultado: 0 };
+  }
+
+  cancelarFormulario() {
+    this.mostrandoFormulario = false;
+    this.favoritoEditando = null;
+  }
+
+  salvarFavorito() {
+    if (!this.novoFavorito.moedaOrigem || !this.novoFavorito.moedaDestino || this.novoFavorito.valor <= 0) {
+      this.mostrarToast('Preencha todos os campos!', 'warning');
+      return;
+    }
+
+    if (this.favoritoEditando) {
+      // Editar
+      this.favoritosService.editarFavorito(this.favoritoEditando._id, this.novoFavorito).subscribe({
+        next: () => {
+          this.mostrarToast('Favorito atualizado!', 'success');
+          this.cancelarFormulario();
+          this.carregarFavoritos();
+        },
+        error: () => this.mostrarToast('Erro ao atualizar', 'danger')
+      });
+    } else {
+      // Adicionar
+      this.favoritosService.adicionarFavorito(this.novoFavorito).subscribe({
+        next: () => {
+          this.mostrarToast('Favorito adicionado!', 'success');
+          this.cancelarFormulario();
+          this.carregarFavoritos();
+        },
+        error: () => this.mostrarToast('Erro ao adicionar', 'danger')
+      });
     }
   }
 
-  ngOnInit() {
-    this.testarFirebase(); // executa ao abrir a página
-  }
-
-
-  async carregarFavoritos() {
-    this.favoritos = await this.favoritosService.getFavoritos();
-  }
-
-  async adicionarFavorito() {
+  async excluirFavorito(id: string) {
     const alert = await this.alertController.create({
-      header: 'Adicionar Favorito',
-      inputs: [
-        { name: 'moedaOrigem', type: 'text', placeholder: 'Moeda de Origem' },
-        { name: 'moedaDestino', type: 'text', placeholder: 'Moeda de Destino' },
-        { name: 'nomePersonalizado', type: 'text', placeholder: 'Nome Personalizado (opcional)' }
-      ],
+      header: 'Excluir favorito',
+      message: 'Tem certeza que deseja excluir?',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
-          text: 'Adicionar',
-          handler: async (data) => {
-            if (!data.moedaOrigem || !data.moedaDestino) return false;
-
-            const novoFav = {
-              moedaOrigem: data.moedaOrigem,
-              moedaDestino: data.moedaDestino,
-              nomePersonalizado: data.nomePersonalizado || ''
-            };
-
-            await this.favoritosService.adicionarFavorito(novoFav);
-            await this.carregarFavoritos();
-            return true;
+          text: 'Excluir',
+          handler: () => {
+            this.favoritosService.deletarFavorito(id).subscribe({
+              next: () => {
+                this.mostrarToast('Excluído com sucesso!', 'success');
+                this.carregarFavoritos();
+              },
+              error: () => this.mostrarToast('Erro ao excluir', 'danger')
+            });
           }
         }
       ]
@@ -98,30 +117,8 @@ export class FavoritosPage {
     await alert.present();
   }
 
-  async editarFavorito(fav: any) {
-    const alert = await this.alertController.create({
-      header: 'Editar Favorito',
-      inputs: [
-        { name: 'moedaOrigem', type: 'text', value: fav.moedaOrigem },
-        { name: 'moedaDestino', type: 'text', value: fav.moedaDestino },
-        { name: 'nomePersonalizado', type: 'text', value: fav.nomePersonalizado }
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Salvar',
-          handler: async (data) => {
-            await this.favoritosService.editarFavorito(fav.id, data);
-            await this.carregarFavoritos();
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  async removerFavorito(fav: any) {
-    await this.favoritosService.removerFavorito(fav.id);
-    await this.carregarFavoritos();
+  private async mostrarToast(msg: string, color: string) {
+    const toast = await this.toastController.create({ message: msg, color, duration: 2000 });
+    toast.present();
   }
 }

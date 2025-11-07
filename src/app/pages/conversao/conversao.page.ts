@@ -68,21 +68,32 @@ export class ConversaoPage {
   async adicionarFavorito() {
     if (!this.result) return;
 
-    const favorito = {
-      nome: `${this.fromCurrency} → ${this.toCurrency}`,
-      de: this.fromCurrency,
-      para: this.toCurrency,
-      valor: this.amount,
-      resultado: this.result
-    };
+   const favorito = {
+  moedaOrigem: this.fromCurrency,
+  moedaDestino: this.toCurrency,
+  valor: this.amount,
+  resultado: this.result
+};
 
-    this.favoritosService.adicionarFavorito(favorito);
-
+this.favoritosService.adicionarFavorito(favorito).subscribe({
+  next: async () => {
     const toast = await this.toastCtrl.create({
       message: 'Conversão adicionada aos favoritos ⭐',
       duration: 2000,
       color: 'success'
     });
     toast.present();
+  },
+  error: async (err) => {
+    console.error('Erro ao salvar favorito:', err);
+    const toast = await this.toastCtrl.create({
+      message: 'Erro ao salvar favorito 😞',
+      duration: 2000,
+      color: 'danger'
+    });
+    toast.present();
+  }
+});
+
   }
 }
