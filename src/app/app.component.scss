@@ -117,3 +117,11 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+ion-content {
+  --overflow: auto;
+}
+
+ion-split-pane {
+  --side-width: 260px; /* ajusta o menu para não esmagar o conteúdo */
+}

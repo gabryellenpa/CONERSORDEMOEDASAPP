@@ -1,5 +1,9 @@
 <ion-header>
-  <ion-toolbar color="">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
     <ion-title>Favoritos</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -18,11 +22,11 @@
     </ion-item>
 
     <p *ngIf="favoritos.length === 0" class="ion-text-center ion-margin-top">
-      Nenhum favorito ainda 💤
+      Nenhum favorito ainda 
     </p>
   </ion-list>
 
-  <!-- FORMULÁRIO (para adicionar ou editar) -->
+  <!-- editar e adicionar -->
   <div *ngIf="mostrandoFormulario" class="formulario-container">
     <ion-item>
       <ion-label position="stacked">Moeda origem</ion-label>
@@ -53,7 +57,6 @@
     </ion-button>
   </div>
 
-  <!-- BOTÃO FLUTUANTE -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="!mostrandoFormulario">
     <ion-fab-button color="primary" (click)="abrirFormulario()">
       <ion-icon name="add"></ion-icon>

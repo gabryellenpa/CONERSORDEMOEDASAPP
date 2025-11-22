@@ -2,25 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { 
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonItem,
-  IonSelect,
-  IonSelectOption,
-  IonLabel,
-  IonButton,
-  IonInput
-} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonSelect, IonSelectOption, IonLabel, IonButton, IonInput, ToastController, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-viagem',
   templateUrl: './viagem.page.html',
   styleUrls: ['./viagem.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonButtons,
     CommonModule,
     FormsModule,
     IonContent,
@@ -32,15 +21,17 @@ import {
     IonSelectOption,
     IonLabel,
     IonButton,
-    IonInput
-  ]
+    IonInput, IonMenuButton]
 })
 export class ViagemPage {
+
   fromCurrency = 'BRL';
   toCurrency = 'USD';
   valorDisponivel = 0;
   valorNecessario = 0;
   resultado: string | null = null;
+
+  constructor(private toastCtrl: ToastController) {}
 
   taxasFixas: any = {
     BRL: { USD: 0.20, EUR: 0.18 },
@@ -48,7 +39,19 @@ export class ViagemPage {
     EUR: { BRL: 5.50, USD: 1.10 }
   };
 
-  calcular() {
+ 
+  async calcular() {
+
+    if (!this.fromCurrency || !this.toCurrency || !this.valorDisponivel || !this.valorNecessario) {
+      const toast = await this.toastCtrl.create({
+        message: 'Preencha todos os campos antes de calcular ⚠️',
+        duration: 2000,
+        color: 'warning'
+      });
+      toast.present();
+      return;
+    }
+
     const taxa = this.taxasFixas[this.fromCurrency]?.[this.toCurrency];
     if (!taxa) {
       this.resultado = 'Conversão não disponível para essas moedas.';

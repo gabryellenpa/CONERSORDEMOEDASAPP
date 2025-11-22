@@ -6,12 +6,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Conexão com MongoDB
+
 mongoose.connect("mongodb+srv://gabryellenpaixao_db_user:12345@claragabryellen.qahbstu.mongodb.net/?appName=claragabryellen")
   .then(() => console.log("✅ Conectado ao MongoDB"))
   .catch((err) => console.error("❌ Erro ao conectar ao MongoDB:", err));
 
-// Modelo de favorito
+
 const FavoritoSchema = new mongoose.Schema({
   moedaOrigem: String,
   moedaDestino: String,
@@ -21,7 +21,7 @@ const FavoritoSchema = new mongoose.Schema({
 
 const Favorito = mongoose.model("Favorito", FavoritoSchema);
 
-// Rotas CRUD
+
 app.get("/favoritos", async (req, res) => {
   const favoritos = await Favorito.find();
   res.json(favoritos);
@@ -43,4 +43,4 @@ app.delete("/favoritos/:id", async (req, res) => {
   res.json({ mensagem: "Favorito removido com sucesso" });
 });
 
-app.listen(3000, () => console.log("🚀 Servidor rodando na porta 3000"));
+app.listen(3000, () => console.log(" Servidor rodando na porta 3000"));

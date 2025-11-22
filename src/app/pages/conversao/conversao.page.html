@@ -1,11 +1,17 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
     <ion-title>Conversão</ion-title>
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content class="ion-padding">
-  <ion-item>
+
+  <ion-item [class.erro]="!fromCurrency">
     <ion-label>De</ion-label>
     <ion-select [(ngModel)]="fromCurrency">
       <ion-select-option value="USD">USD</ion-select-option>
@@ -14,7 +20,8 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
+ 
+  <ion-item [class.erro]="!toCurrency">
     <ion-label>Para</ion-label>
     <ion-select [(ngModel)]="toCurrency">
       <ion-select-option value="USD">USD</ion-select-option>
@@ -23,7 +30,7 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
+  <ion-item [class.erro]="!amount">
     <ion-label position="floating">Valor</ion-label>
     <ion-input type="number" [(ngModel)]="amount"></ion-input>
   </ion-item>
@@ -33,11 +40,13 @@
   <div *ngIf="result">
     <h2>Resultado: {{ result | number:'1.2-2' }} {{ toCurrency }}</h2>
   </div>
-</ion-content>
 
-<ion-content class="ion-padding">
-
-    <ion-button color="" (click)="adicionarFavorito()">⭐ Adicionar aos Favoritos</ion-button>
-
+  <ion-button 
+    *ngIf="mostrarFavorito"
+    expand="full" 
+    color="warning" 
+    (click)="adicionarFavorito()">
+    ⭐ Adicionar aos Favoritos
+  </ion-button>
 
 </ion-content>

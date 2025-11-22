@@ -1,20 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FavoritosService } from '../../services/favoritos.service';
 import { ToastController, AlertController } from '@ionic/angular';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonList,
-  IonInput,
-  IonFab,
-  IonFabButton,
-  IonIcon
-} from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonButton, IonList, IonInput, IonFab, IonFabButton, IonIcon, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { add, close } from 'ionicons/icons';
@@ -23,11 +10,10 @@ import { add, close } from 'ionicons/icons';
   selector: 'app-favoritos',
   templateUrl: './favoritos.page.html',
   standalone: true,
-  imports: [
+  imports: [IonButtons,
     IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
     IonLabel, IonButton, IonList, IonInput, IonFab, IonFabButton,
-    IonIcon, CommonModule, FormsModule
-  ]
+    IonIcon, CommonModule, FormsModule, IonMenuButton]
 })
 export class FavoritosPage implements OnInit {
   favoritos: any[] = [];
@@ -72,7 +58,6 @@ export class FavoritosPage implements OnInit {
     }
 
     if (this.favoritoEditando) {
-      // Editar
       this.favoritosService.editarFavorito(this.favoritoEditando._id, this.novoFavorito).subscribe({
         next: () => {
           this.mostrarToast('Favorito atualizado!', 'success');
@@ -82,7 +67,7 @@ export class FavoritosPage implements OnInit {
         error: () => this.mostrarToast('Erro ao atualizar', 'danger')
       });
     } else {
-      // Adicionar
+      
       this.favoritosService.adicionarFavorito(this.novoFavorito).subscribe({
         next: () => {
           this.mostrarToast('Favorito adicionado!', 'success');

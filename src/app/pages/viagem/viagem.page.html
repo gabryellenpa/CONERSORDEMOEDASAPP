@@ -1,11 +1,16 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
     <ion-title>Planejamento de Viagem</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item>
+
+  <ion-item [class.erro]="!fromCurrency">
     <ion-label>Moeda de origem</ion-label>
     <ion-select [(ngModel)]="fromCurrency">
       <ion-select-option value="BRL">BRL</ion-select-option>
@@ -14,7 +19,7 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
+  <ion-item [class.erro]="!toCurrency">
     <ion-label>Moeda de destino</ion-label>
     <ion-select [(ngModel)]="toCurrency">
       <ion-select-option value="BRL">BRL</ion-select-option>
@@ -23,13 +28,13 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Quanto você tem</ion-label>
+  <ion-item [class.erro]="!valorDisponivel">
+    <ion-label position="floating">Quanto você tem na moeda de origem?</ion-label>
     <ion-input type="number" [(ngModel)]="valorDisponivel"></ion-input>
   </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Quanto pretende gastar</ion-label>
+  <ion-item [class.erro]="!valorNecessario">
+    <ion-label position="floating">Quanto pretende gastar na moeda de destino?</ion-label>
     <ion-input type="number" [(ngModel)]="valorNecessario"></ion-input>
   </ion-item>
 
@@ -38,4 +43,5 @@
   <div *ngIf="resultado">
     <h2>{{ resultado }}</h2>
   </div>
+
 </ion-content>
