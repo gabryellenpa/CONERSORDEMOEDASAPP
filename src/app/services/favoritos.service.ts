@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FavoritosService {
-  private apiUrl = 'http://localhost:3000/favoritos'; 
+  private apiUrl = 'https://backend-eubs.onrender.com/'; 
 
   constructor(private http: HttpClient) {}
 
